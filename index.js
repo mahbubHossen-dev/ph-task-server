@@ -6,7 +6,15 @@ require('dotenv').config()
 
 
 app.use(express.json())
-app.use(cors())
+
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://job-task-22470.web.app'
+        ],
+    credentials: true,
+    optionsSuccessStatus: 200
+}))
 // phTask
 // dIW0RulLCUtyaYLW
 
