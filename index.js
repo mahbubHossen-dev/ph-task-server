@@ -11,7 +11,7 @@ app.use(cors())
 // dIW0RulLCUtyaYLW
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.PH_TASK_USER}:${process.env.PH_TASK_PASS}@cluster0.xdjfp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -45,6 +45,39 @@ async function run() {
         app.post('/tasks', async(req, res) => {
             const data = req.body
             const result = await taskCollection.insertOne(data)
+            res.send(result)
+        })
+
+        app.get('/tasks/:category', async (req, res) => {
+            const category = req.params.category
+            const query = {category}
+            const result = await taskCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        
+        app.delete('/task/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await taskCollection.deleteOne(query)
+            res.send(result)
+            console.log(query)
+        })
+
+        app.put('/taskUpdate/:id', async (req, res) => {
+            const id = req.params.id;
+            const data = req.body;
+            console.log(data)
+            const query = {_id: new ObjectId(id)}
+
+            const updatedDoc = {
+                $set: {
+                    title: data.title,
+                    category: data.category,
+                    description: data.description,
+                }
+            }
+            const result = await taskCollection.updateOne(query, updatedDoc)
             res.send(result)
         })
 
